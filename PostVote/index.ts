@@ -1,12 +1,15 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import axios, { AxiosRequestConfig } from 'axios';
+import { isContext } from "vm";
 const RECAPTCHA = process.env["recaptchaCode"]
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
     context.log("Body: ", req.body)
+    context.log("Verification Code: ", RECAPTCHA)
 
-    let validation = await validateRECAP(req.body["g-recaptcha-response"]);
+    let validation = await validateRECAP(context, req.body["g-recaptcha-response"]);
+
     context.log(validation);
 
     if (validation) {
@@ -24,7 +27,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 export default httpTrigger;
 
-async function validateRECAP(token: string) {
+async function validateRECAP(context: Context, token: string) {
     let config: AxiosRequestConfig = {
         method: 'post',
         url: "https://www.google.com/recaptcha/api/siteverify",
@@ -34,11 +37,15 @@ async function validateRECAP(token: string) {
         }
     }
 
+    context.log("Config: ", config)
+
     return await axios(config)
         .then(response => {
+            context.log("Response: ", response)
+            context.log("ResponseData: ", response.data)
             return response.data.success;
         })
         .catch(error => {
-            console.log(error);
+            context.log(error);
         });
 }
