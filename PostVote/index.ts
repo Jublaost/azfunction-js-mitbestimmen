@@ -1,28 +1,49 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import axios, { AxiosRequestConfig } from 'axios';
-import { isContext } from "vm";
 const RECAPTCHA = process.env["recaptchaCode"]
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest, voteIn): Promise<void> {
     context.log('HTTP trigger function processed a request.');
     context.log("Body: ", req.body)
-    context.log("Verification Code: ", RECAPTCHA)
+    context.log("VoteIn: ", voteIn)
 
     let validation = await validateRECAP(context, req.body["g-recaptcha-response"]);
 
-    context.log(validation);
-
-    if (validation) {
-        context.log("validation succeeded");
-        context.res = {
-            status: 200
-        }
-    } else {
+    if (!validation) {
         context.log("validation failed");
         context.res = {
             status: 500
         }
+        return
     }
+
+    if (voteIn) {
+        context.log("already voted");
+        context.res = {
+            status: 400,
+            body: "already voted"
+        }
+        return
+    }
+
+    let vote = req.body;
+    context.log("Vote: ", vote)
+
+    try {
+        context.bindings.voteOut = vote;
+        context.res = {
+            status: 200,
+            body: "successful"
+        }
+        return
+    } catch (e) {
+        context.res = {
+            status: 500,
+            body: "server error"
+        }
+        return
+    }
+
 };
 
 export default httpTrigger;
@@ -36,13 +57,8 @@ async function validateRECAP(context: Context, token: string) {
             response: token
         }
     }
-
-    context.log("Config: ", config)
-
     return await axios(config)
         .then(response => {
-            context.log("Response: ", response)
-            context.log("ResponseData: ", response.data)
             return response.data.success;
         })
         .catch(error => {
