@@ -10,7 +10,9 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "qs": "^6.11.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
