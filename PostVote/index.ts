@@ -48,8 +48,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     try {
         context.bindings.voteOut = vote;
+
         let token = await getToken();
+        context.log("Token: ", token);
+
         let mail = await sendMail(token, vote);
+        context.log("Mail: ", mail);
+
         context.res = {
             status: 200,
             body: "successful"
