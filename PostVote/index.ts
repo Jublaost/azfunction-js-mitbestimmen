@@ -18,8 +18,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log("Body: ", req.body)
     context.log("VoteIn: ", voteIn)
 
-    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
     let validation = await validateRECAP(context, req.body["g-recaptcha-response"]);
 
     if (!validation) {
@@ -105,7 +103,6 @@ async function getToken(): Promise<string> {
     return await axios
         .post(TOKEN_ENDPOINT, qs.stringify(postData))
         .then(response => {
-            // console.log(response.data);
             return response.data.access_token;
         })
         .catch(error => {
@@ -113,7 +110,12 @@ async function getToken(): Promise<string> {
         });
 }
 
-
+/**
+ * Send Verification Email
+ * @param token MS Graph Token
+ * @param vote Vote Object
+ * @returns 
+ */
 async function sendMail(token: string, vote: any) {
     let config: AxiosRequestConfig = {
         method: 'post',
@@ -126,7 +128,7 @@ async function sendMail(token: string, vote: any) {
                 "subject": "Verifizierung und Abschluss des Votings!",
                 "body": {
                     "contentType": "html",
-                    "content": "Vielen Dank füre deine Stimme!<br />'" + vote.category + "' mit der Option '" + vote.option + "'<br />Bitte bestätige nur noch deine Stimme mit folgendem Link: <a href='https://web-mitbestimmen.azurewebsites.net/api/VoteValidation?email=" + vote.email + "&code=" + vote.code + "'>Bestätigen</a><br /><br />Jublastische Grüsse<br />"
+                    "content": "Hallo Jublaner!<br /><br /> Vielen Dank füre deine Stimme!<br />'" + vote.category + "' mit der Option '" + vote.option + "'<br />Bitte bestätige nur noch deine Stimme mit folgendem Link: <a href='https://web-mitbestimmen.azurewebsites.net/api/VoteValidation?email=" + vote.email + "&code=" + vote.code + "'>Bestätigen</a><br /><br />Jublastische Grüsse<br />"
                 },
                 "toRecipients": [
                     {
@@ -142,7 +144,6 @@ async function sendMail(token: string, vote: any) {
 
     return await axios(config)
         .then(response => {
-            console.log(response.data);
             return response.data.value;
         })
         .catch(error => {
