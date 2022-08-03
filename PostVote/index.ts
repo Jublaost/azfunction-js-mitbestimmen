@@ -128,7 +128,7 @@ async function sendMail(token: string, vote: any) {
                 "subject": "Verifizierung und Abschluss des Votings!",
                 "body": {
                     "contentType": "html",
-                    "content": "Hallo Jublaner!<br /><br /> Vielen Dank füre deine Stimme!<br />'" + vote.category + "' mit der Option '" + vote.option + "'<br />Bitte bestätige nur noch deine Stimme mit folgendem Link: <a href='https://web-mitbestimmen.azurewebsites.net/api/VoteValidation?id=" + vote.id + "&code=" + vote.code + "'>Bestätigen</a><br /><br />Jublastische Grüsse<br />"
+                    "content": "Hallo Jublaner!<br /><br /> Vielen Dank füre deine Stimme!<br />'" + vote.category + "' mit der Option '" + vote.option + "'<br />Bitte bestätige nur noch deine Stimme mit folgendem Link: <a href='https://web-mitbestimmen.azurewebsites.net/api/VoteValidation?id=" + vote.id + "&vote=" + vote.vote + "&code=" + vote.code + "'>Bestätigen</a><br /><br />Jublastische Grüsse<br />"
                 },
                 "toRecipients": [
                     {
