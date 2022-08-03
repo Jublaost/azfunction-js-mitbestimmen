@@ -42,6 +42,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     let uuid = uuidv4();
     let vote = req.body;
     vote.code = uuid;
+    vote.approved = false;
+
     context.log("Vote: ", vote)
 
     try {
