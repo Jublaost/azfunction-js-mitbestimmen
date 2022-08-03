@@ -6,9 +6,28 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "get",
-        "post"
+        "get"
       ]
+    },
+    {
+      "name": "voteIn",
+      "type": "cosmosDB",
+      "connectionStringSetting": "Jublaost_COSMOSDB",
+      "databaseName": "mitbestimmen",
+      "collectionName": "{vote}",
+      "id": "{id}",
+      "partitionKey": "{id}",
+      "direction": "in"
+    },
+    {
+      "name": "voteOut",
+      "type": "cosmosDB",
+      "databaseName": "mitbestimmen",
+      "collectionName": "{vote}",
+      "createIfNotExists": true,
+      "partitionKey": "/id",
+      "connectionStringSetting": "Jublaost_COSMOSDB",
+      "direction": "out"
     },
     {
       "type": "http",

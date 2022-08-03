@@ -3,8 +3,10 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest, voteIn): Promise<void> {
     context.log('HTTP trigger function processed a request.');
 
-    let successForward = "https://link.jublaost.ch/votingSuccess";
-    let errorForward = "https://link.jublaost.ch/votingError";
+    context.log("Vote: ", voteIn)
+
+    let successForward = "https://mitbestimmen.jublaost.ch/messages/success";
+    let errorForward = "https://mitbestimmen.jublaost.ch/messages/error";
 
     if (req.query.code == voteIn.code) {
         voteIn.approved = true
