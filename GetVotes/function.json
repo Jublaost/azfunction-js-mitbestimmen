@@ -1,0 +1,29 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "name": "votesIn",
+      "type": "cosmosDB",
+      "connectionStringSetting": "Jublaost_COSMOSDB",
+      "databaseName": "mitbestimmen",
+      "collectionName": "{vote}",
+      "direction": "in",
+      "sqlQuery": "SELECT c.id, c.vote, c.option, c.category, c.approved FROM c"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ],
+  "scriptFile": "../dist/GetVotes/index.js"
+}
